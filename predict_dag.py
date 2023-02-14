@@ -13,7 +13,8 @@ from airflow.decorators import dag, task
     schedule_interval='0 12 * * *',
     params={
         "start_date": (datetime.now().date() - timedelta(1)).strftime("%Y%m%d"), 
-        "end_date": datetime.now().date().strftime("%Y%m%d")
+        "end_date": datetime.now().date().strftime("%Y%m%d"),
+        "now": datetime.now().strftime("%Y%m%d %H:%M:%S")
         }
     )
 def taskflow():
