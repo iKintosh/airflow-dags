@@ -40,6 +40,7 @@ def taskflow():
         task_id='is_api_active',
         http_conn_id='wiki_pageviews_api',
         endpoint='Rick_Astley/daily/20230101/20230102'
+        headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36'}
     )
     
     task_get_data = SimpleHttpOperator(
@@ -47,6 +48,7 @@ def taskflow():
         http_conn_id='wiki_pageviews_api',
         endpoint='Rick_Astley/daily/{{ params.start_date }}/{{ params.end_date }}',
         method='GET',
+        headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36'}
     )
     
     task_create_connection() >> task_is_api_active >> task_get_data
