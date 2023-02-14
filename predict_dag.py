@@ -9,7 +9,8 @@ from airflow.decorators import dag, task
     
 @dag(
     dag_id="predict",
-    start_date=datetime(2023, 1, 1), 
+    start_date=datetime(2023, 1, 1),
+    schedule_interval='0 12 * * *',
     params={
         "start_date": (datetime.now().date() - timedelta(1)).strftime("%Y%m%d"), 
         "end_date": datetime.now().date().strftime("%Y%m%d")
@@ -28,6 +29,7 @@ def taskflow():
 
         if str(conn_name) == str(conn.conn_id):
             logging.warning(f"Connection {conn.conn_id} already exists")
+            return None
 
         session.add(conn)
         session.commit()
