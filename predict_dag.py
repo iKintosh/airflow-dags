@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from airflow.providers.http.sensors.http import HttpSensor
 from airflow.providers.http.operators.http import SimpleHttpOperator
 import logging
@@ -12,9 +12,8 @@ from airflow.decorators import dag, task
     start_date=datetime(2023, 1, 1),
     schedule_interval='0 12 * * *',
     params={
-        "start_date": (datetime.now().date() - timedelta(1)).strftime("%Y%m%d"), 
-        "end_date": datetime.now().date().strftime("%Y%m%d"),
-        "now": datetime.now().strftime("%Y%m%d %H:%M:%S")
+        "start_date": (datetime.now(timezone.utc).date() - timedelta(1)).strftime("%Y%m%d"), 
+        "end_date": datetime.now(timezone.utc).date().strftime("%Y%m%d"),
         }
     )
 def taskflow():
