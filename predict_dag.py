@@ -1,5 +1,5 @@
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 from airflow.models import DAG
 from airflow.providers.http.sensors.http import HttpSensor
 from airflow.providers.http.operators.http import SimpleHttpOperator
@@ -15,8 +15,8 @@ from airflow.decorators import dag, task
     schedule=None, 
     start_date=datetime(2023, 1, 1), 
     params={
-        "start_date": (datetime.datetime.now().date() - datetime.timedelta(1)).strftime("%Y%m%d"), 
-        "end_date": datetime.datetime.now().date().strftime("%Y%m%d")
+        "start_date": (datetime.now().date() - timedelta(1)).strftime("%Y%m%d"), 
+        "end_date": datetime.now().date().strftime("%Y%m%d")
         }
     )
 def taskflow():
