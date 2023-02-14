@@ -11,8 +11,7 @@ from airflow.decorators import dag, task
 
     
 @dag(
-    dag_id="predict", 
-    schedule=None, 
+    dag_id="predict",
     start_date=datetime(2023, 1, 1), 
     params={
         "start_date": (datetime.now().date() - timedelta(1)).strftime("%Y%m%d"), 
