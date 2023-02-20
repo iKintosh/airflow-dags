@@ -65,7 +65,7 @@ def taskflow():
     task_get_data = SimpleHttpOperator(
         task_id='extract_pageview',
         http_conn_id='wiki_pageviews_api',
-        endpoint='Rick_Astley/daily/{{ data_interval_start | ds_nodash }}/{{ data_interval_end | ds_nodash }}',
+        endpoint='Rick_Astley/daily/{{ macros.ds_format(macros.ds_add(ds, -1), "%Y-%m-%d", "%Y%m%d")}}/{{ ds_nodash }}',
         method='GET',
         headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36'},
         log_response=True,
