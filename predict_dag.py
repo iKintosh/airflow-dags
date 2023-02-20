@@ -5,6 +5,25 @@ import logging
 from airflow import settings
 from airflow.models import Connection
 from airflow.decorators import dag, task
+import json
+
+
+def filter_response(text):
+    clean_response = []
+    all_articles = json.loads(text)['items']
+    for article in all_articles:
+        clean_response.append(
+            {
+                "article": article['article'],
+                "views": article['views'],
+                "timestamp": parse_datetime(article['timestamp'])
+            }
+        )
+    return json.dumps(clean_response)
+        
+def parse_datetime(datetime_str):
+    dt = datetime.strptime(datetime_str, '%Y%m%d%H')
+    return dt.date().isoformat()
 
     
 @dag(
@@ -50,6 +69,7 @@ def taskflow():
         method='GET',
         headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36'},
         log_response=True,
+        response_filter=lambda response: filter_response(response)
     )
     
     task_create_connection() >> task_is_api_active >> task_get_data
