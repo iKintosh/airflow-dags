@@ -72,6 +72,11 @@ def taskflow():
         response_filter=lambda response: filter_response(response.text)
     )
     
-    task_create_connection() >> task_is_api_active >> task_get_data
+    @task(task_id='print_execution_date_task')
+    def _print_execution_date(ds):
+        print(f"The execution date of this flow is {ds}")
+    
+    
+    _print_execution_date() >> task_create_connection() >> task_is_api_active >> task_get_data
     
 dag = taskflow()
