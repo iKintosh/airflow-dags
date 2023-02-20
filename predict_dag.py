@@ -6,6 +6,8 @@ from airflow import settings
 from airflow.models import Connection
 from airflow.decorators import dag, task
 import json
+import uuid
+
 
 
 def filter_response(text):
@@ -68,6 +70,44 @@ def taskflow():
         response_filter=lambda response: filter_response(response.text)
     )
     
-    task_create_connection() >> task_is_api_active >> task_get_data
+    @task(task_id='task_upload_data_to_postgres')
+    def upload_to_postgres(ti=None):
+        from sqlalchemy import create_engine
+        from sqlalchemy.orm import sessionmaker
+        from sqlalchemy.ext.declarative import declarative_base
+        from sqlalchemy import Column, String, Integer, Date
+        import os
+        
+        PASS = os.getenv('POSTGRES_PASSWORD')
+        
+        Base = declarative_base()
+
+
+        class WikiViews(Base):
+            __tablename__ = 'wikiviews'
+            
+            id = Column(Integer, primary_key=True)
+            date = Column(Date)
+            views = Column(Integer)
+            pagename = Column(String)
+            
+        
+        
+        data_ingest = []
+        views = json.loads(ti.xcom_pull(key="return_value", task_ids="extract_pageview"))
+        for v in views:
+            data_ingest.append(WikiViews(date=v['timestamp'], views=v['views'], pagename=v['article']))
+        
+        engine = create_engine(f"postgresql+psycopg2://airflow:{PASS}@metadata-db/wiki")
+        WikiViews.__table__.create(bind=engine, checkfirst=True)
+        
+        Session = sessionmaker(bind=engine)
+        session = Session()
+        session.bulk_save_objects(data_ingest)
+        session.commit()
+        session.close()
+        
+    
+    task_create_connection() >> task_is_api_active >> task_get_data >> upload_to_postgres()
     
 dag = taskflow()
