@@ -28,12 +28,8 @@ def parse_datetime(datetime_str):
     
 @dag(
     dag_id="predict",
-    start_date=datetime(2023, 1, 1),
+    start_date=datetime(2022, 12, 1),
     schedule_interval="@daily",
-    params={
-        "start_date": (datetime.now(timezone.utc).date() - timedelta(1)).strftime("%Y%m%d"), 
-        "end_date": datetime.now(timezone.utc).date().strftime("%Y%m%d"),
-        }
     )
 def taskflow():
     
