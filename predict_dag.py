@@ -33,8 +33,7 @@ def parse_datetime(datetime_str):
     params={
         "start_date": (datetime.now(timezone.utc).date() - timedelta(1)).strftime("%Y%m%d"), 
         "end_date": datetime.now(timezone.utc).date().strftime("%Y%m%d"),
-        },
-    catchup=False,
+        }
     )
 def taskflow():
     
