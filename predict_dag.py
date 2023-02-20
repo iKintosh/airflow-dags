@@ -73,8 +73,8 @@ def taskflow():
     )
     
     @task(task_id='print_execution_date_task')
-    def _print_execution_date(ds):
-        print(f"The execution date of this flow is {ds}")
+    def _print_execution_date(execution_date=None):
+        print(f"The execution date of this flow is {execution_date}")
     
     
     _print_execution_date() >> task_create_connection() >> task_is_api_active >> task_get_data
