@@ -28,12 +28,13 @@ def parse_datetime(datetime_str):
     
 @dag(
     dag_id="predict",
-    start_date=datetime(2023, 1, 1),
-    schedule_interval='0 12 * * *',
+    start_date=datetime(2024, 1, 1),
+    schedule_interval="@daily",
     params={
         "start_date": (datetime.now(timezone.utc).date() - timedelta(1)).strftime("%Y%m%d"), 
         "end_date": datetime.now(timezone.utc).date().strftime("%Y%m%d"),
-        }
+        },
+    catchup=False,
     )
 def taskflow():
     
@@ -65,7 +66,7 @@ def taskflow():
     task_get_data = SimpleHttpOperator(
         task_id='extract_pageview',
         http_conn_id='wiki_pageviews_api',
-        endpoint='Rick_Astley/daily/{{ params.start_date }}/{{ params.end_date }}',
+        endpoint='Rick_Astley/daily/{{ data_interval_start | ds_nodash }}/{{ data_interval_end | ds_nodash }}',
         method='GET',
         headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36'},
         log_response=True,
