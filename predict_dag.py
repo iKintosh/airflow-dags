@@ -28,7 +28,7 @@ def parse_datetime(datetime_str):
     
 @dag(
     dag_id="predict",
-    start_date=datetime(2024, 1, 1),
+    start_date=datetime(2023, 1, 1),
     schedule_interval="@daily",
     params={
         "start_date": (datetime.now(timezone.utc).date() - timedelta(1)).strftime("%Y%m%d"), 
@@ -72,11 +72,6 @@ def taskflow():
         response_filter=lambda response: filter_response(response.text)
     )
     
-    @task(task_id='print_execution_date_task')
-    def _print_execution_date(execution_date=None):
-        print(f"The execution date of this flow is {execution_date}")
-    
-    
-    _print_execution_date() >> task_create_connection() >> task_is_api_active >> task_get_data
+    task_create_connection() >> task_is_api_active >> task_get_data
     
 dag = taskflow()
